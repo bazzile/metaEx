@@ -39,6 +39,34 @@ for root_dir, dirname, filenames in os.walk(root_folder):
             img_list.append(img)
             del img
 
+        if re.match(r'SPOT\d*.+\d+\.met', filename, re.IGNORECASE) is not None:    # SPOT
+            counter += 1
+
+            with open(os.path.join(root_dir, filename), "r") as f:
+                contents = f.readlines()
+                img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
+                img['SOURCE'] = 'SPOT'  # название спутника ДОДЕЛАТЬ!!!!
+                img['RESOLUT'] = round(abs(float(contents[2].strip())), 1)
+                img['ANGLE'] = round(abs(float(contents[25].split()[1])), 1)
+                img['SUN_ELEV'] = round(abs(float(contents[23].split()[1])), 1)
+                DATE = datetime.datetime.strptime((contents[20].split()[1]), '%Y-%m-%dT%H:%M:%S.%fZ')
+                img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+                del img
+
+        if re.match(r'\d+\.XML', filename, re.IGNORECASE) is not None:  # BKA
+            counter += 1
+
+            xml = ElementTree(file=os.path.join(root_dir, filename))
+            root = xml.getroot()
+
+            img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
+            img['SOURCE'] = root[3][0].get("NAME")  # название спутника
+            img['RESOLUT'] = round(float(root[6][1].get("VALUE")), 1)
+            img['ANGLE'] = abs(float(root[4][2].get("VALUE")))
+            DATE = datetime.datetime.strptime(root[2][2].get("VALUE"), '%Y-%m-%dT%H:%M:%S')
+            img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+
+
 # Запись excel
 col_names = ['PATH', 'SOURCE', 'RESOLUT', 'ANGLE', 'SUN_ELEV', 'DATE']
 # col_names = [
@@ -60,4 +88,3 @@ for i in range(len(img_list)):
         sheet1.write(i + 1, col_name + 1, img_list[i][col_names[col_name]])
 
 book.save('Catalog.xls')
-
