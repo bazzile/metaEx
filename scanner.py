@@ -19,52 +19,56 @@ img_list = []
 
 counter = 0
 for root_dir, dirname, filenames in os.walk(root_folder):
-    for filename in filenames:
-        img = {}
-        if re.match(r'\d{2}\D{3}.+P\d+\.XML', filename, re.IGNORECASE) is not None:  # DG
-            counter += 1
-            # print("Scanning", filename)
+    try:
+        for filename in filenames:
+            print('Сканирую %s' % os.path.join(root_dir, filename))
+            img = {}
+            if re.match(r'\d{2}\D{3}.+P\d+\.XML', filename, re.IGNORECASE) is not None:  # DG
+                counter += 1
+                # print("Scanning", filename)
 
-            xml = ElementTree(file=os.path.join(root_dir, filename))
-            root = xml.getroot()
+                xml = ElementTree(file=os.path.join(root_dir, filename))
+                root = xml.getroot()
 
-            img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
-            img['SOURCE'] = get("SATID")  # название спутника
-            img['RESOLUT'] = round(float(get("PRODUCTGSD")), 1)  # размер пиксела
-            img['ANGLE'] = round(float(get("MEANOFFNADIRVIEWANGLE")), 1)
-            img['SUN_ELEV'] = round(float(get("MEANSUNEL")), 1)
-            stringDATE = get("FIRSTLINETIME")
-            DATE = datetime.datetime.strptime(stringDATE, '%Y-%m-%dT%H:%M:%S.%fZ')
-            img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
-            img_list.append(img)
-            del img
-
-        if re.match(r'SPOT\d*.+\d+\.met', filename, re.IGNORECASE) is not None:    # SPOT
-            counter += 1
-
-            with open(os.path.join(root_dir, filename), "r") as f:
-                contents = f.readlines()
                 img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
-                img['SOURCE'] = 'SPOT'  # название спутника ДОДЕЛАТЬ!!!!
-                img['RESOLUT'] = round(abs(float(contents[2].strip())), 1)
-                img['ANGLE'] = round(abs(float(contents[25].split()[1])), 1)
-                img['SUN_ELEV'] = round(abs(float(contents[23].split()[1])), 1)
-                DATE = datetime.datetime.strptime((contents[20].split()[1]), '%Y-%m-%dT%H:%M:%S.%fZ')
+                img['SOURCE'] = get("SATID")  # название спутника
+                img['RESOLUT'] = round(float(get("PRODUCTGSD")), 1)  # размер пиксела
+                img['ANGLE'] = round(float(get("MEANOFFNADIRVIEWANGLE")), 1)
+                img['SUN_ELEV'] = round(float(get("MEANSUNEL")), 1)
+                stringDATE = get("FIRSTLINETIME")
+                DATE = datetime.datetime.strptime(stringDATE, '%Y-%m-%dT%H:%M:%S.%fZ')
                 img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+                img_list.append(img)
                 del img
 
-        if re.match(r'\d+\.XML', filename, re.IGNORECASE) is not None:  # BKA
-            counter += 1
+            if re.match(r'SPOT\d*.+\d+\.met', filename, re.IGNORECASE) is not None:    # SPOT
+                counter += 1
 
-            xml = ElementTree(file=os.path.join(root_dir, filename))
-            root = xml.getroot()
+                with open(os.path.join(root_dir, filename), "r") as f:
+                    contents = f.readlines()
+                    img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
+                    img['SOURCE'] = 'SPOT'  # название спутника ДОДЕЛАТЬ!!!!
+                    img['RESOLUT'] = round(abs(float(contents[2].strip())), 1)
+                    img['ANGLE'] = round(abs(float(contents[25].split()[1])), 1)
+                    img['SUN_ELEV'] = round(abs(float(contents[23].split()[1])), 1)
+                    DATE = datetime.datetime.strptime((contents[20].split()[1]), '%Y-%m-%dT%H:%M:%S.%fZ')
+                    img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+                    del img
 
-            img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
-            img['SOURCE'] = root[3][0].get("NAME")  # название спутника
-            img['RESOLUT'] = round(float(root[6][1].get("VALUE")), 1)
-            img['ANGLE'] = abs(float(root[4][2].get("VALUE")))
-            DATE = datetime.datetime.strptime(root[2][2].get("VALUE"), '%Y-%m-%dT%H:%M:%S')
-            img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+            if re.match(r'\d+\.XML', filename, re.IGNORECASE) is not None:  # BKA
+                counter += 1
+
+                xml = ElementTree(file=os.path.join(root_dir, filename))
+                root = xml.getroot()
+
+                img['PATH'] = str(os.path.abspath(os.path.join(root_dir, filename)))
+                img['SOURCE'] = root[3][0].get("NAME")  # название спутника
+                img['RESOLUT'] = round(float(root[6][1].get("VALUE")), 1)
+                img['ANGLE'] = abs(float(root[4][2].get("VALUE")))
+                DATE = datetime.datetime.strptime(root[2][2].get("VALUE"), '%Y-%m-%dT%H:%M:%S')
+                img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+    except:
+        continue
 
 
 # Запись excel
