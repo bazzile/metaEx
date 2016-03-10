@@ -21,7 +21,7 @@ counter = 0
 for root_dir, dirname, filenames in os.walk(root_folder):
     try:
         for filename in filenames:
-            print('Scanning %s' % os.path.join(root_dir, filename))
+            print('Scanning %s' % os.path.join(root_dir))
             img = {}
             if re.match(r'\d{2}\D{3}.+P\d+\.XML', filename, re.IGNORECASE) is not None:  # DG
                 counter += 1
