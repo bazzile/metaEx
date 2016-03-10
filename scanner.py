@@ -79,8 +79,8 @@ col_names = ['PATH', 'SOURCE', 'RESOLUT', 'ANGLE', 'SUN_ELEV', 'DATE']
 #     'M_CONT_D', 'SOURCE_F', 'BRANCH', 'S_CONT_N', 'S_CONT_D'
 # ]
 
-book = xlwt.Workbook(encoding='utf-8')
-sheet1 = book.add_sheet('Каталог')
+book = xlwt.Workbook(encoding='latin-1')
+sheet1 = book.add_sheet('Catalog')
 for i in range(len(col_names)):
     sheet1.write(0, i + 1, col_names[i], xlwt.easyxf(
         'font: bold true;'
