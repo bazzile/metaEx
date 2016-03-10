@@ -53,6 +53,7 @@ for root_dir, dirname, filenames in os.walk(root_folder):
                     img['SUN_ELEV'] = round(abs(float(contents[23].split()[1])), 1)
                     DATE = datetime.datetime.strptime((contents[20].split()[1]), '%Y-%m-%dT%H:%M:%S.%fZ')
                     img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+                    img_list.append(img)
                     del img
 
             if re.match(r'\d+\.XML', filename, re.IGNORECASE) is not None:  # BKA
@@ -67,6 +68,8 @@ for root_dir, dirname, filenames in os.walk(root_folder):
                 img['ANGLE'] = abs(float(root[4][2].get("VALUE")))
                 DATE = datetime.datetime.strptime(root[2][2].get("VALUE"), '%Y-%m-%dT%H:%M:%S')
                 img['DATE'] = datetime.datetime.strftime(DATE, '%d.%m.%Y')
+                img_list.append(img)
+                del img
     except:
         continue
 
