@@ -2,7 +2,7 @@ from distutils.core import setup
 import py2exe
 
 setup(
-    console=['scanner.py'],
+    windows=['GUI.py'],
     name='metaEx',
     version='',
     packages=[''],
