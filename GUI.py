@@ -7,9 +7,12 @@ import scanner
 
 def ask_directory():
     directory = tkFileDialog.askdirectory()
-    scanner.scanner(directory)
-    tkMessageBox.showinfo("Информация", "Сканирование завершено!")
-    root.quit()
+    if directory == '':
+        tkMessageBox.showinfo("Информация", "Директория не выбрана!")
+    else:
+        scanner.scanner(directory)
+        tkMessageBox.showinfo("Информация", "Сканирование завершено!")
+        root.quit()
 
 
 def terminate():
