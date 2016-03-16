@@ -2,13 +2,14 @@
 from Tkinter import *
 import tkFileDialog
 import tkMessageBox
-from scanner import scanner
+import scanner
 
 
 def ask_directory():
     directory = tkFileDialog.askdirectory()
-    scanner(directory)
-    tkMessageBox.showinfo("Информация", "Сканирование завершено, закройте программу")
+    scanner.scanner(directory)
+    tkMessageBox.showinfo("Информация", "Сканирование завершено!")
+    root.quit()
 
 
 def terminate():
